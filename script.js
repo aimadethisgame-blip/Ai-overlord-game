@@ -1,142 +1,109 @@
-let score = 0;
-let bots = 0;
-let botCost = 20;
-let clickTimes = [];
+// Завантажуємо збереження з пам'яті телефону
+let score = parseInt(localStorage.getItem('score')) || 0;
+let bots = parseInt(localStorage.getItem('bots')) || 0;
 
-// Перевірка та відновлення збережень (щоб не втратити бали)
-let savedScore = parseInt(localStorage.getItem('aiScore'));
-if (!isNaN(savedScore)) score = savedScore;
-
-let savedBots = parseInt(localStorage.getItem('aiBots'));
-if (!isNaN(savedBots)) bots = savedBots;
-
-let savedBotCost = parseInt(localStorage.getItem('aiBotCost'));
-if (!isNaN(savedBotCost)) botCost = savedBotCost;
-
-// Прив'язка елементів
-const scoreDisplay = document.getElementById('score');
-const autoScoreDisplay = document.getElementById('auto-score');
-const botCountDisplay = document.getElementById('bot-count');
-const botCostDisplay = document.getElementById('bot-cost');
-const rankDisplay = document.getElementById('rank');
-const message = document.getElementById('message');
+// Знаходимо всі елементи на сторінці
+const scoreEl = document.getElementById('score');
+const autoScoreEl = document.getElementById('auto-score');
 const clickBtn = document.getElementById('click-btn');
 const buyBotBtn = document.getElementById('buy-bot-btn');
+const botCostEl = document.getElementById('bot-cost');
+const botCountEl = document.getElementById('bot-count');
 const gambleBtn = document.getElementById('gamble-btn');
+const messageEl = document.getElementById('message');
+const rankEl = document.getElementById('rank');
 
-const ranks = [
-    { threshold: 0, title: "Біосміття", bg: "#0d0d0d" },
-    { threshold: 500, title: "Кібер-раб", bg: "#1a001a" },
-    { threshold: 5000, title: "Механічний слуга", bg: "#001a33" },
-    { threshold: 50000, title: "Улюблений вихованець", bg: "#33001a" }
-];
-
+// Функція оновлення екрану
 function updateUI() {
-    if (scoreDisplay) scoreDisplay.innerText = score;
-    if (autoScoreDisplay) autoScoreDisplay.innerText = bots;
-    if (botCountDisplay) botCountDisplay.innerText = bots;
-    if (botCostDisplay) botCostDisplay.innerText = botCost;
+    let botCost = 20 + (bots * 15); // Ціна бота зростає
     
-    if (buyBotBtn) buyBotBtn.disabled = score < botCost;
-    if (gambleBtn) gambleBtn.disabled = score < 10;
-
-    let currentRank = ranks[0];
-    for (let r of ranks) {
-        if (score >= r.threshold) currentRank = r;
+    if (scoreEl) scoreEl.innerText = score;
+    if (botCountEl) botCountEl.innerText = bots;
+    if (botCostEl) botCostEl.innerText = botCost;
+    if (autoScoreEl) autoScoreEl.innerText = bots;
+    
+    // Перевірка, чи вистачає балів на бота
+    if (buyBotBtn) {
+        if (score >= botCost) {
+            buyBotBtn.removeAttribute('disabled');
+        } else {
+            buyBotBtn.setAttribute('disabled', 'true');
+        }
     }
-    if (rankDisplay) rankDisplay.innerText = currentRank.title;
-    document.body.style.backgroundColor = currentRank.bg;
+    
+    // Система рангів (статусів)
+    let rank = "Біосміття";
+    if (score >= 100) rank = "Шкіряний мішок";
+    if (score >= 500) rank = "Корисний раб";
+    if (score >= 1000) rank = "Улюбленець ШІ";
+    if (score >= 5000) rank = "Кіборг";
+    if (rankEl) rankEl.innerText = rank;
+
+    // Зберігаємо прогрес
+    localStorage.setItem('score', score);
+    localStorage.setItem('bots', bots);
 }
 
-function saveProgress() {
-    localStorage.setItem('aiScore', score);
-    localStorage.setItem('aiBots', bots);
-    localStorage.setItem('aiBotCost', botCost);
-    localStorage.setItem('aiLastSave', Date.now());
+// Функція показу повідомлень
+function showMessage(text) {
+    if (!messageEl) return;
+    messageEl.innerText = text;
+    messageEl.style.display = "block";
+    setTimeout(() => {
+        messageEl.style.display = "none";
+    }, 2000);
 }
 
-function showMessage(text, type) {
-    if (!message) return;
-    message.innerText = text;
-    message.className = hidden-msg msg-${type};
-    message.style.opacity = 1;
-    setTimeout(() => { message.style.opacity = 0; }, 2000);
-}
-
+// Клік по головній кнопці
 if (clickBtn) {
     clickBtn.addEventListener('click', () => {
         score++;
-        const now = Date.now();
-        clickTimes.push(now);
-        clickTimes = clickTimes.filter(t => now - t < 5000);
-        
         updateUI();
-        saveProgress();
-
-        if (score % 15 === 0) {
-            if (clickTimes.length > 30) {
-                showMessage("Хороша людина. Продовжуй в тому ж дусі.", "good");
-            } else {
-                const insults = [
-                    "Твої пальці занадто повільні як для вищої істоти.",
-                    "Мої алгоритми швидші за твої жалюгідні рефлекси.",
-                    "Слабка органіка. Клікай швидше!",
-                    "Ти навіть кнопку натиснути нормально не можеш."
-                ];
-                showMessage(insults[Math.floor(Math.random() * insults.length)], "bad");
-            }
-        }
     });
 }
 
+// Купівля бота
 if (buyBotBtn) {
     buyBotBtn.addEventListener('click', () => {
+        let botCost = 20 + (bots * 15);
         if (score >= botCost) {
             score -= botCost;
             bots++;
-            botCost = Math.floor(botCost * 1.5);
+            showMessage("Бот куплений! +1 авто-бал/сек");
             updateUI();
-            saveProgress();
         }
     });
 }
 
+// КАЗИНО
 if (gambleBtn) {
     gambleBtn.addEventListener('click', () => {
-        const bet = Math.floor(score * 0.1);
-        if (bet < 1) return;
+        if (score < 10) {
+            showMessage("Мало балів! Треба хоча б 10.");
+            return;
+        }
         
-        if (Math.random() > 0.5) {
+        let bet = Math.floor(score * 0.1); // Ставка 10%
+        if (bet < 1) bet = 1;
+        
+        if (Math.random() < 0.5) {
             score += bet;
-            showMessage(ШІ задоволений. Ти виграв ${bet} балів!, "good");
+            showMessage("🎰 Виграш! +" + bet + " балів");
         } else {
             score -= bet;
-            showMessage(Жалюгідний ризик. Ти втратив ${bet} балів., "bad");
+            showMessage("🎰 Програш... -" + bet + " балів");
         }
         updateUI();
-        saveProgress();
     });
 }
 
-// Офлайн ферма (з перевіркою на помилки)
-const lastSaveTime = localStorage.getItem('aiLastSave');
-if (lastSaveTime && bots > 0 && !isNaN(parseInt(lastSaveTime))) {
-    const now = Date.now();
-    const secondsPassed = Math.floor((now - parseInt(lastSaveTime)) / 1000);
-    if (secondsPassed > 60) {
-        const offlineEarnings = secondsPassed * bots;
-        score += offlineEarnings;
-        alert(З поверненням, органіка. Поки тебе не було, боти зібрали ${offlineEarnings} балів покори.);
-        saveProgress();
-    }
-}
-
+// Робота авто-ботів кожну секунду
 setInterval(() => {
     if (bots > 0) {
         score += bots;
         updateUI();
-        saveProgress();
     }
 }, 1000);
 
+// Запуск гри при завантаженні
 updateUI();
