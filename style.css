@@ -5,20 +5,23 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0;
     text-align: center;
+    transition: background-color 1s ease;
 }
 .container {
-    background: #1a1a1a;
+    background: rgba(26, 26, 26, 0.9);
     padding: 30px;
     border-radius: 15px;
     border: 2px solid #00ffcc;
     box-shadow: 0 0 20px #00ffcc;
     max-width: 400px;
     width: 90%;
+    margin: 20px 0;
 }
 h1 { font-size: 2em; margin-bottom: 5px; }
+.rank-display { font-size: 1.1em; color: #ffcc00; margin-bottom: 15px; font-weight: bold; }
 .score-board { font-size: 1.5em; margin: 10px 0; color: #ff0055; font-weight: bold; }
 .stats { font-size: 1em; color: #aaa; margin-bottom: 20px; }
 .main-btn {
@@ -34,15 +37,12 @@ h1 { font-size: 2em; margin-bottom: 5px; }
     width: 100%;
 }
 .main-btn:active { transform: scale(0.95); background: #ff0055; color: white; }
-.hidden-msg { margin-top: 15px; font-size: 0.9em; opacity: 0; transition: opacity 0.5s; height: 20px; }
+.hidden-msg { margin-top: 15px; font-size: 0.9em; opacity: 0; transition: opacity 0.3s; height: 40px; font-weight: bold;}
+.msg-bad { color: #ff3333; }
+.msg-good { color: #33ff33; }
 
-/* Стилі для Магазину */
-.shop {
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 1px dashed #333;
-}
-.shop h2 { font-size: 1.2em; margin-bottom: 15px; color: #fff; }
+.shop, .casino { margin-top: 25px; padding-top: 15px; border-top: 1px dashed #555; }
+.shop h2, .casino h2 { font-size: 1.2em; margin-bottom: 15px; color: #fff; }
 .shop-btn {
     background: #333;
     color: #00ffcc;
@@ -56,4 +56,6 @@ h1 { font-size: 2em; margin-bottom: 5px; }
 }
 .shop-btn:active { background: #00ffcc; color: #000; }
 .shop-btn:disabled { background: #111; color: #555; border-color: #555; cursor: not-allowed; }
+.casino-btn { color: #ffcc00; border-color: #ffcc00; }
+.casino-btn:active { background: #ffcc00; color: #000; }
 .shop p { margin-top: 10px; font-size: 0.9em; color: #aaa; }
