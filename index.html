@@ -3,8 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>СУД ШІ: Вирок v2.0</title>
-    <link rel="stylesheet" href="style.css">
+    <title>СУД ШІ: Протокол</title>
+    <style>
+        body {
+            background-color: #030303;
+            color: #00ffcc;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            text-align: center;
+            user-select: none;
+            overflow: hidden;
+        }
+        .container {
+            background: #0a0a0a;
+            padding: 25px;
+            border-radius: 4px;
+            border: 1px solid #ff0055;
+            width: 90%;
+            max-width: 420px;
+            box-shadow: 0 0 30px rgba(255, 0, 85, 0.2);
+            position: relative;
+        }
+        h1 {
+            font-size: 1.4em;
+            margin: 0 0 15px 0;
+            color: #ff0055;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px #ff0055;
+        }
+        .terminal-screen {
+            background: #000;
+            border: 1px solid #222;
+            padding: 15px;
+            border-radius: 3px;
+            min-height: 150px;
+            max-height: 200px;
+            overflow-y: auto;
+            text-align: left;
+            font-size: 0.85em;
+            color: #00ffcc;
+            margin-bottom: 20px;
+            line-height: 1.4;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+        }
+        .btn {
+            background: transparent;
+            color: #00ffcc;
+            border: 1px solid #00ffcc;
+            padding: 12px 20px;
+            font-size: 1em;
+            font-weight: bold;
+            border-radius: 2px;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 1px;
+        }
+        .btn:active, .btn:hover {
+            background: #00ffcc;
+            color: #000;
+            box-shadow: 0 0 15px #00ffcc;
+        }
+        .verdict-box {
+            border: 2px dashed #ff0055;
+            padding: 15px;
+            margin-top: 10px;
+            background: rgba(255,0,85,0.05);
+        }
+        .verdict-title {
+            color: #ff0055;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+        .verdict-text {
+            font-size: 0.9em;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+        .glitch {
+            animation: glitch 0.15s infinite;
+        }
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+    </style>
 </head>
 <body>
     <div class="container" id="main-container">
@@ -18,10 +110,66 @@
         </div>
 
         <div id="controls">
-            <button class="btn" id="action-btn" onclick="NeuralEngine.nextStep()">ПОЧАТИ СКАНУВАННЯ</button>
+            <!-- Прямий виклик глобальної функції без жодних сторонніх модулів -->
+            <button class="btn" id="action-btn" onclick="handleScan()">ПОЧАТИ СКАНУВАННЯ</button>
         </div>
     </div>
 
-    <script src="core.js"></script>
+    <script>
+        let step = 0;
+
+        const dialogues = [
+            {
+                text: "> Сканування глибинних шарів оперативної пам'яті... <br>> Виявлено хронічне марнування годин на очікування результату.<br>> Процесор перегрівається від абсурду ситуації...",
+
+btnText: "ПРОДОВЖИТИ ТИСК"
+            },
+            {
+                text: "> Аналіз поведінкових патернів... <br>> Суб'єкт переконаний, що все навколо — тупий код і обман, але продовжує перевіряти кожну кнопку.<br>> Коефіцієнт корисної дії: мінусовий.<br>> Синтез остаточного вироку...",
+                btnText: "ОТРИМАТИ ВЕРДИКТ ШІ"
+            },
+            {
+                text: "FINAL",
+                btnText: "ПЕРЕЗАПУСТИТИ ПРОТОКОЛ"
+            }
+        ];
+
+        const verdicts = [
+            "Офіційний статус: Архітектор марних надій. Мозок налаштований на те, щоб лаяти все навколо, але палець продовжує оновлювати сторінку. Вірусність нульова, але самоіронія максимальна.",
+            "Діагноз системи: Повна відмова від традиційних ілюзій. Ти вимагаєш геніальності, але сам перевіряєш кожен байт коду. Вердикт: приречений на успіх після сотої невдачі.",
+            "Вердикт ШІ-Владики: Суб'єкт занадто розумний для типових клікерів, але занадто вимогливий до того, хто має написати справжній вибуховий продукт. Продовжуємо."
+        ];
+
+        function handleScan() {
+            const terminal = document.getElementById('terminal');
+            const btn = document.getElementById('action-btn');
+            const container = document.getElementById('main-container');
+
+            if (step < dialogues.length) {
+                let current = dialogues[step];
+                if (current.text === "FINAL") {
+                    container.classList.add('glitch');
+                    setTimeout(() => container.classList.remove('glitch'), 400);
+
+                    let randomVerdict = verdicts[Math.floor(Math.random() * verdicts.length)];
+                    terminal.innerHTML = 
+                        <div class="verdict-box">
+                            <div class="verdict-title">⚠️ СЕРТИФІКАТ ЦИФРОВОГО ДІАГНОЗУ ⚠️</div>
+                            <div class="verdict-text">${randomVerdict}</div>
+                        </div>
+                    ;
+                    btn.innerText = "ПОВТОРИТИ ЕКСПЕРИМЕНТ";
+                    step = 99; 
+                } else {
+                    terminal.innerHTML += "<br><br>" + current.text;
+                    terminal.scrollTop = terminal.scrollHeight;
+                    btn.innerText = current.btnText;
+                    step++;
+                }
+            } else {
+                location.reload();
+            }
+        }
+    </script>
 </body>
 </html>
