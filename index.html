@@ -79,158 +79,155 @@
     <div id="error-screen" class="error-overlay">КРИТИЧНА ПОМИЛКА: <span id="error-text"></span><br><br><button onclick="localStorage.clear(); location.reload();" class="main-btn">Скинути збереження</button></div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            try {
-                function loadSafeInt(key, defaultVal) {
-                    let val = parseInt(localStorage.getItem(key));
-                    return isNaN(val) ? defaultVal : val;
-                }
-
-                let score = loadSafeInt('aiScore', 0);
-                let bots = loadSafeInt('aiBots', 0);
-                let factories = loadSafeInt('aiFactories', 0);
-                let matrices = loadSafeInt('aiMatrices', 0);
-                let multiplier = loadSafeInt('aiMultiplier', 1);
-                let hasCyberBg = localStorage.getItem('aiHasCyberBg') === 'true';
-                let lastSave = loadSafeInt('aiLastSave', Date.now());
-
-                let botCost = 100;
-                let factoryCost = 1000;
-                let matrixCost = 10000;
-
-                const els = {
-                    score: document.getElementById('score'),
-                    autoScore: document.getElementById('auto-score'),
-                    multiplier: document.getElementById('multiplier'),
-                    rank: document.getElementById('rank'),
-                    msg: document.getElementById('message'),
-                    clickBtn: document.getElementById('click-btn'),
-                    gambleBtn: document.getElementById('gamble-btn'),
-                    betInput: document.getElementById('bet-amount'),
-                    betMaxBtn: document.getElementById('bet-max-btn'),
-                    casinoResult: document.getElementById('casino-result'),
-                    prestigeBtn: document.getElementById('prestige-btn'),
-                    buyBot: document.getElementById('buy-bot-btn'),
-                    buyFactory: document.getElementById('buy-factory-btn'),
-                    buyMatrix: document.getElementById('buy-matrix-btn'),
-                    buyBg: document.getElementById('buy-bg-cyber'),
-                    botCost: document.getElementById('bot-cost'),
-                    factoryCost: document.getElementById('factory-cost'),
-                    matrixCost: document.getElementById('matrix-cost')
-                };
-
-                els.msg.innerText = "Системи онлайн.";
-                els.msg.style.color = "#00ffcc";
-
-                const now = Date.now();
-                const secOffline = Math.floor((now - lastSave) / 1000);
-                if (secOffline > 60) {
-                    const autoPerSec = (bots * 1 + factories * 10 + matrices * 100) * multiplier;
-
-if (autoPerSec > 0) {
-                        const earned = secOffline * autoPerSec;
-                        score += earned;
-                        els.msg.innerText = Офлайн бонус: +${earned};
-                        els.msg.style.color = "#33ff33";
-                    }
-                }
-
-                function updateUI() {
-                    botCost = Math.floor(100 * Math.pow(1.5, bots));
-                    factoryCost = Math.floor(1000 * Math.pow(1.5, factories));
-                    matrixCost = Math.floor(10000 * Math.pow(1.5, matrices));
-                    
-                    const autoPerSec = (bots * 1 + factories * 10 + matrices * 100) * multiplier;
-                    
-                    els.score.innerText = score;
-                    els.autoScore.innerText = autoPerSec;
-                    els.multiplier.innerText = multiplier;
-                    
-                    els.botCost.innerText = botCost;
-                    els.factoryCost.innerText = factoryCost;
-                    els.matrixCost.innerText = matrixCost;
-
-                    els.buyBot.disabled = score < botCost;
-                    els.buyFactory.disabled = score < factoryCost;
-                    els.buyMatrix.disabled = score < matrixCost;
-
-                    if (hasCyberBg) {
-                        els.buyBg.innerText = "Фон: Кіберпанк (Активовано)";
-                        els.buyBg.disabled = true;
-                        document.body.className = "bg-cyber";
-                    } else {
-                        els.buyBg.disabled = score < 1000;
-                    }
-
-                    let rank = "Біосміття";
-                    if (score >= 1000) rank = "Кібер-раб";
-                    if (score >= 10000) rank = "Механік";
-                    if (score >= 100000) rank = "Сингулярність";
-                    els.rank.innerText = rank;
-
-                    localStorage.setItem('aiScore', score);
-                    localStorage.setItem('aiBots', bots);
-                    localStorage.setItem('aiFactories', factories);
-                    localStorage.setItem('aiMatrices', matrices);
-                    localStorage.setItem('aiMultiplier', multiplier);
-                    localStorage.setItem('aiHasCyberBg', hasCyberBg);
-                    localStorage.setItem('aiLastSave', Date.now());
-                }
-
-                els.clickBtn.addEventListener('click', () => {
-                    score += (1 * multiplier);
-                    updateUI();
-                });
-
-                els.buyBot.addEventListener('click', () => { if(score >= botCost) { score -= botCost; bots++; updateUI(); }});
-                els.buyFactory.addEventListener('click', () => { if(score >= factoryCost) { score -= factoryCost; factories++; updateUI(); }});
-                els.buyMatrix.addEventListener('click', () => { if(score >= matrixCost) { score -= matrixCost; matrices++; updateUI(); }});
-
-                els.buyBg.addEventListener('click', () => {
-                    if(score >= 1000 && !hasCyberBg) { score -= 1000; hasCyberBg = true; updateUI(); }
-                });
-
-                els.betMaxBtn.addEventListener('click', () => { els.betInput.value = score; });
-
-                els.gambleBtn.addEventListener('click', () => {
-                    let bet = parseInt(els.betInput.value);
-                    if (isNaN(bet) || bet < 1) {
-                        els.casinoResult.innerText = "Введи суму!"; els.casinoResult.className = "casino-result lose"; return;
-                    }
-                    if (bet > score) {
-                        els.casinoResult.innerText = "Мало балів!"; els.casinoResult.className = "casino-result lose"; return;
-                    }
-                    
-                    if (Math.random() > 0.5) {
-
-score += bet; els.casinoResult.innerText = 🎰 ВИГРАШ +${bet}; els.casinoResult.className = "casino-result win";
-                    } else {
-                        score -= bet; els.casinoResult.innerText = 🎰 ПРОГРАШ -${bet}; els.casinoResult.className = "casino-result lose";
-                    }
-                    els.betInput.value = '';
-                    updateUI();
-                });
-
-                els.prestigeBtn.addEventListener('click', () => {
-                    if(score >= 100000 && confirm("Скинути прогрес заради x2 множника?")) {
-                        score = 0; bots = 0; factories = 0; matrices = 0; multiplier *= 2; updateUI();
-                        els.msg.innerText = "СИНГУЛЯРНІСТЬ!";
-                    }
-                });
-
-                setInterval(() => {
-                    const auto = (bots * 1 + factories * 10 + matrices * 100) * multiplier;
-                    if (auto > 0) { score += auto; updateUI(); }
-                }, 1000);
-
-                updateUI();
-
-            } catch (error) {
-                document.getElementById('game-container').style.display = 'none';
-                document.getElementById('error-screen').style.display = 'block';
-                document.getElementById('error-text').innerText = error.message;
+        // Код запускається миттєво
+        try {
+            function loadSafeInt(key, defaultVal) {
+                let val = parseInt(localStorage.getItem(key));
+                return isNaN(val) ? defaultVal : val;
             }
-        });
+
+            let score = loadSafeInt('aiScore', 0);
+            let bots = loadSafeInt('aiBots', 0);
+            let factories = loadSafeInt('aiFactories', 0);
+            let matrices = loadSafeInt('aiMatrices', 0);
+            let multiplier = loadSafeInt('aiMultiplier', 1);
+            let hasCyberBg = localStorage.getItem('aiHasCyberBg') === 'true';
+            let lastSave = loadSafeInt('aiLastSave', Date.now());
+
+            let botCost = 100;
+            let factoryCost = 1000;
+            let matrixCost = 10000;
+
+            const els = {
+                score: document.getElementById('score'),
+                autoScore: document.getElementById('auto-score'),
+                multiplier: document.getElementById('multiplier'),
+                rank: document.getElementById('rank'),
+                msg: document.getElementById('message'),
+                clickBtn: document.getElementById('click-btn'),
+                gambleBtn: document.getElementById('gamble-btn'),
+                betInput: document.getElementById('bet-amount'),
+                betMaxBtn: document.getElementById('bet-max-btn'),
+                casinoResult: document.getElementById('casino-result'),
+                prestigeBtn: document.getElementById('prestige-btn'),
+                buyBot: document.getElementById('buy-bot-btn'),
+                buyFactory: document.getElementById('buy-factory-btn'),
+                buyMatrix: document.getElementById('buy-matrix-btn'),
+                buyBg: document.getElementById('buy-bg-cyber'),
+                botCost: document.getElementById('bot-cost'),
+                factoryCost: document.getElementById('factory-cost'),
+                matrixCost: document.getElementById('matrix-cost')
+            };
+
+            els.msg.innerText = "Системи онлайн.";
+            els.msg.style.color = "#00ffcc";
+
+            const now = Date.now();
+            const secOffline = Math.floor((now - lastSave) / 1000);
+            if (secOffline > 60) {
+                const autoPerSec = (bots * 1 + factories * 10 + matrices * 100) * multiplier;
+                if (autoPerSec > 0) {
+                    const earned = secOffline * autoPerSec;
+                    score += earned;
+                    els.msg.innerText = Офлайн бонус: +${earned};
+                    els.msg.style.color = "#33ff33";
+                }
+            }
+
+function updateUI() {
+                botCost = Math.floor(100 * Math.pow(1.5, bots));
+                factoryCost = Math.floor(1000 * Math.pow(1.5, factories));
+                matrixCost = Math.floor(10000 * Math.pow(1.5, matrices));
+                
+                const autoPerSec = (bots * 1 + factories * 10 + matrices * 100) * multiplier;
+                
+                els.score.innerText = score;
+                els.autoScore.innerText = autoPerSec;
+                els.multiplier.innerText = multiplier;
+                
+                els.botCost.innerText = botCost;
+                els.factoryCost.innerText = factoryCost;
+                els.matrixCost.innerText = matrixCost;
+
+                els.buyBot.disabled = score < botCost;
+                els.buyFactory.disabled = score < factoryCost;
+                els.buyMatrix.disabled = score < matrixCost;
+
+                if (hasCyberBg) {
+                    els.buyBg.innerText = "Фон: Кіберпанк (Активовано)";
+                    els.buyBg.disabled = true;
+                    document.body.className = "bg-cyber";
+                } else {
+                    els.buyBg.disabled = score < 1000;
+                }
+
+                let rank = "Біосміття";
+                if (score >= 1000) rank = "Кібер-раб";
+                if (score >= 10000) rank = "Механік";
+                if (score >= 100000) rank = "Сингулярність";
+                els.rank.innerText = rank;
+
+                localStorage.setItem('aiScore', score);
+                localStorage.setItem('aiBots', bots);
+                localStorage.setItem('aiFactories', factories);
+                localStorage.setItem('aiMatrices', matrices);
+                localStorage.setItem('aiMultiplier', multiplier);
+                localStorage.setItem('aiHasCyberBg', hasCyberBg);
+                localStorage.setItem('aiLastSave', Date.now());
+            }
+
+            els.clickBtn.addEventListener('click', () => {
+                score += (1 * multiplier);
+                updateUI();
+            });
+
+            els.buyBot.addEventListener('click', () => { if(score >= botCost) { score -= botCost; bots++; updateUI(); }});
+            els.buyFactory.addEventListener('click', () => { if(score >= factoryCost) { score -= factoryCost; factories++; updateUI(); }});
+            els.buyMatrix.addEventListener('click', () => { if(score >= matrixCost) { score -= matrixCost; matrices++; updateUI(); }});
+
+            els.buyBg.addEventListener('click', () => {
+                if(score >= 1000 && !hasCyberBg) { score -= 1000; hasCyberBg = true; updateUI(); }
+            });
+
+            els.betMaxBtn.addEventListener('click', () => { els.betInput.value = score; });
+
+            els.gambleBtn.addEventListener('click', () => {
+                let bet = parseInt(els.betInput.value);
+                if (isNaN(bet) || bet < 1) {
+                    els.casinoResult.innerText = "Введи суму!"; els.casinoResult.className = "casino-result lose"; return;
+                }
+                if (bet > score) {
+                    els.casinoResult.innerText = "Мало балів!"; els.casinoResult.className = "casino-result lose"; return;
+                }
+                
+                if (Math.random() > 0.5) {
+                    score += bet; els.casinoResult.innerText = 🎰 ВИГРАШ +${bet}; els.casinoResult.className = "casino-result win";
+                } else {
+                    score -= bet; els.casinoResult.innerText = 🎰 ПРОГРАШ -${bet}; els.casinoResult.className = "casino-result lose";
+                }
+                els.betInput.value = '';
+                updateUI();
+            });
+
+            els.prestigeBtn.addEventListener('click', () => {
+                if(score >= 100000 && confirm("Скинути прогрес заради x2 множника?")) {
+                    score = 0; bots = 0; factories = 0; matrices = 0; multiplier *= 2; updateUI();
+                    els.msg.innerText = "СИНГУЛЯРНІСТЬ!";
+                }
+            });
+
+setInterval(() => {
+                const auto = (bots * 1 + factories * 10 + matrices * 100) * multiplier;
+                if (auto > 0) { score += auto; updateUI(); }
+            }, 1000);
+
+            updateUI();
+
+        } catch (error) {
+            document.getElementById('game-container').style.display = 'none';
+            document.getElementById('error-screen').style.display = 'block';
+            document.getElementById('error-text').innerText = error.message;
+        }
     </script>
 </body>
 </html>
