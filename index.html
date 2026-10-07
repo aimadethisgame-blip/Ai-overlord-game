@@ -3,93 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AI Overlord v4.0</title>
-    <style>
-        body { background-color: #050505; color: #00ffcc; font-family: monospace; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; text-align: center; user-select: none; }
-        .container { background: #111; padding: 20px; border-radius: 10px; border: 2px solid #00ffcc; width: 90%; max-width: 400px; box-shadow: 0 0 15px #00ffcc; }
-        h1 { font-size: 1.8em; margin: 5px 0; color: #00ffcc; }
-        .score { font-size: 1.6em; color: #ff0055; margin: 15px 0; font-weight: bold; }
-        .btn { background: #00ffcc; color: #000; border: none; padding: 15px; font-size: 1.2em; font-weight: bold; border-radius: 8px; width: 100%; cursor: pointer; margin-top: 10px; }
-        .btn:active { background: #ff0055; color: #fff; transform: scale(0.98); }
-        .shop-btn { background: #222; color: #00ffcc; border: 1px solid #00ffcc; padding: 10px; width: 100%; border-radius: 5px; margin-top: 8px; font-weight: bold; }
-        .shop-btn:active { background: #00ffcc; color: #000; }
-        .msg { margin-top: 15px; color: #33ff33; font-weight: bold; font-size: 0.9em; min-height: 20px; }
-    </style>
+    <title>СУД ШІ: Вирок v2.0</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>ШІ-Владика v4.0</h1>
-        <p>Статус: <span id="rank">Біосміття</span></p>
-        <div class="score">Бали: <span id="score">0</span></div>
-        <div class="msg" id="msg">Система завантажена. Тисни!</div>
+    <div class="container" id="main-container">
+        <h1>[ СУД ШІ: ПРОТОКОЛ ]</h1>
+        
+        <div class="terminal-screen" id="terminal">
+            > Завантаження ядра нейромережі...<br>
+            > Ініціалізація біометричних протоколів...<br>
+            > Суб'єкт ідентифікований. Рівень спротиву: нульовий.<br>
+            > Натисніть кнопку нижче, щоб запустити процес психологічного розбору.
+        </div>
 
-        <!-- Головна кнопка з прямим викликом функції -->
-        <button class="btn" onclick="addScore()">Служити ШІ</button>
-
-        <div style="margin-top: 20px; border-top: 1px dashed #440044; padding-top: 15px;">
-            <button class="shop-btn" onclick="buyBot()">Купити бота (+1/сек) - Ціна: <span id="bot-cost">10</span></button>
-            <button class="shop-btn" onclick="resetGame()" style="border-color: #ff3333; color: #ff3333; margin-top: 15px;">Скинути все</button>
+        <div id="controls">
+            <button class="btn" id="action-btn" onclick="NeuralEngine.nextStep()">ПОЧАТИ СКАНУВАННЯ</button>
         </div>
     </div>
 
-    <script>
-        // Прості глобальні змінні без складних обгорток
-        let score = parseInt(localStorage.getItem('v4_score')) || 0;
-        let bots = parseInt(localStorage.getItem('v4_bots')) || 0;
-        let botCost = 10;
-
-        function updateView() {
-            // Динамічний перерахунок ціни залежно від кількості ботів
-            botCost = 10 * Math.pow(1.5, bots);
-            
-            document.getElementById('score').innerText = Math.floor(score);
-            document.getElementById('bot-cost').innerText = Math.floor(botCost);
-            
-            let rank = "Біосміття";
-            if (score >= 50) rank = "Кібер-раб";
-            if (score >= 200) rank = "Механік";
-            document.getElementById('rank').innerText = rank;
-
-            // Збереження
-            localStorage.setItem('v4_score', score);
-            localStorage.setItem('v4_bots', bots);
-        }
-
-        function addScore() {
-            score += 1;
-            updateView();
-        }
-
-        function buyBot() {
-            let cost = 10 * Math.pow(1.5, bots);
-            if (score >= cost) {
-                score -= cost;
-                bots += 1;
-                document.getElementById('msg').innerText = "Бот придбаний!";
-                updateView();
-            } else {
-                document.getElementById('msg').innerText = "Недостатньо балів!";
-            }
-        }
-
-        function resetGame() {
-            localStorage.clear();
-            score = 0;
-            bots = 0;
-            updateView();
-            document.getElementById('msg').innerText = "Прогрес скинуто.";
-        }
-
-        // Автозаробіток каждую секунду
-        setInterval(() => {
-            if (bots > 0) {
-                score += bots * 1;
-                updateView();
-            }
-        }, 1000);
-
-        // Первинне оновлення екрана при завантаженні
-        updateView();
-    </script>
+    <script src="core.js"></script>
 </body>
 </html>
