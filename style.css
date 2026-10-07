@@ -8,11 +8,12 @@ body {
     min-height: 100vh;
     margin: 0;
     text-align: center;
-    transition: background-color 1s ease;
+    transition: background 1s ease;
 }
+body.bg-cyber { background: linear-gradient(45deg, #0f0c29, #302b63, #24243e); }
 .container {
-    background: rgba(26, 26, 26, 0.9);
-    padding: 30px;
+    background: rgba(26, 26, 26, 0.95);
+    padding: 25px;
     border-radius: 15px;
     border: 2px solid #00ffcc;
     box-shadow: 0 0 20px #00ffcc;
@@ -21,7 +22,8 @@ body {
     margin: 20px 0;
 }
 h1 { font-size: 2em; margin-bottom: 5px; }
-.rank-display { font-size: 1.1em; color: #ffcc00; margin-bottom: 15px; font-weight: bold; }
+.rank-display { font-size: 1.1em; color: #ffcc00; margin-bottom: 5px; font-weight: bold; }
+.multiplier-display { font-size: 1em; color: #ff00ff; margin-bottom: 15px; font-weight: bold; text-shadow: 0 0 5px #ff00ff; }
 .score-board { font-size: 1.5em; margin: 10px 0; color: #ff0055; font-weight: bold; }
 .stats { font-size: 1em; color: #aaa; margin-bottom: 20px; }
 .main-btn {
@@ -38,11 +40,8 @@ h1 { font-size: 2em; margin-bottom: 5px; }
 }
 .main-btn:active { transform: scale(0.95); background: #ff0055; color: white; }
 .hidden-msg { margin-top: 15px; font-size: 0.9em; opacity: 0; transition: opacity 0.3s; height: 40px; font-weight: bold;}
-.msg-bad { color: #ff3333; }
-.msg-good { color: #33ff33; }
-
-.shop, .casino { margin-top: 25px; padding-top: 15px; border-top: 1px dashed #555; }
-.shop h2, .casino h2 { font-size: 1.2em; margin-bottom: 15px; color: #fff; }
+.shop, .casino, .prestige { margin-top: 25px; padding-top: 15px; border-top: 1px dashed #555; }
+h2 { font-size: 1.1em; margin-bottom: 15px; color: #fff; }
 .shop-btn {
     background: #333;
     color: #00ffcc;
@@ -53,9 +52,23 @@ h1 { font-size: 2em; margin-bottom: 5px; }
     width: 100%;
     font-weight: bold;
     transition: 0.2s;
+    margin-bottom: 8px;
 }
 .shop-btn:active { background: #00ffcc; color: #000; }
 .shop-btn:disabled { background: #111; color: #555; border-color: #555; cursor: not-allowed; }
 .casino-btn { color: #ffcc00; border-color: #ffcc00; }
 .casino-btn:active { background: #ffcc00; color: #000; }
-.shop p { margin-top: 10px; font-size: 0.9em; color: #aaa; }
+.prestige-btn { color: #ff00ff; border-color: #ff00ff; }
+.prestige-btn:active { background: #ff00ff; color: #fff; }
+.bg-btn { color: #00ffff; border-color: #00ffff; }
+.bg-btn:active { background: #00ffff; color: #000; }
+.prestige p { font-size: 0.8em; color: #aaa; margin-top: 5px; }
+
+/* Нові стилі для Казино */
+.casino-controls { display: flex; gap: 10px; margin-bottom: 10px; }
+#bet-amount { flex-grow: 1; background: #222; color: #00ffcc; border: 1px solid #00ffcc; border-radius: 5px; padding: 5px; text-align: center; font-family: inherit; font-size: 1em; }
+#bet-max-btn { flex-basis: 35%; margin-bottom: 0; background: #440000; color: #ff3333; border-color: #ff3333;}
+#bet-max-btn:active { background: #ff3333; color: #fff; }
+.casino-result { margin-top: 15px; font-weight: bold; min-height: 20px; font-size: 1.1em;}
+.win { color: #33ff33; text-shadow: 0 0 8px #33ff33; }
+.lose { color: #ff3333; text-shadow: 0 0 8px #ff3333; }
