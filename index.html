@@ -2,56 +2,246 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Overlord: Human Pet</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI Overlord v3.1</title>
+    <style>
+        body {
+            background-color: #0d0d0d; color: #00ffcc; font-family: 'Courier New', Courier, monospace;
+            display: flex; justify-content: center; align-items: center; min-height: 100vh;
+            margin: 0; text-align: center; transition: background 1s ease; user-select: none;
+        }
+        body.bg-cyber { background: linear-gradient(45deg, #0f0c29, #302b63, #24243e); }
+        .container {
+            background: rgba(26, 26, 26, 0.95); padding: 25px; border-radius: 15px;
+            border: 2px solid #00ffcc; box-shadow: 0 0 20px #00ffcc; max-width: 400px; width: 90%; margin: 20px 0;
+        }
+        h1 { font-size: 2em; margin-bottom: 5px; }
+        .rank-display { font-size: 1.1em; color: #ffcc00; margin-bottom: 5px; font-weight: bold; }
+        .multiplier-display { font-size: 1em; color: #ff00ff; margin-bottom: 15px; font-weight: bold; text-shadow: 0 0 5px #ff00ff; }
+        .score-board { font-size: 1.5em; margin: 10px 0; color: #ff0055; font-weight: bold; }
+        .stats { font-size: 1em; color: #aaa; margin-bottom: 20px; }
+        .main-btn {
+            background: #00ffcc; color: #000; border: none; padding: 15px 30px;
+            font-size: 1.2em; font-weight: bold; border-radius: 10px; cursor: pointer; width: 100%;
+        }
+        .main-btn:active { transform: scale(0.95); background: #ff0055; color: white; }
+        .hidden-msg { margin-top: 15px; font-size: 0.9em; height: 40px; font-weight: bold;}
+        .shop, .casino, .prestige { margin-top: 25px; padding-top: 15px; border-top: 1px dashed #555; }
+        h2 { font-size: 1.1em; margin-bottom: 15px; color: #fff; }
+        .shop-btn {
+            background: #333; color: #00ffcc; border: 1px solid #00ffcc; padding: 10px;
+            border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold; margin-bottom: 8px;
+        }
+        .shop-btn:active { background: #00ffcc; color: #000; }
+        .shop-btn:disabled { background: #111; color: #555; border-color: #555; cursor: not-allowed; }
+        .casino-btn { color: #ffcc00; border-color: #ffcc00; }
+        .casino-btn:active { background: #ffcc00; color: #000; }
+        .prestige-btn { color: #ff00ff; border-color: #ff00ff; }
+        .prestige-btn:active { background: #ff00ff; color: #fff; }
+        .bg-btn { color: #00ffff; border-color: #00ffff; }
+        .casino-controls { display: flex; gap: 10px; margin-bottom: 10px; }
+        #bet-amount { flex-grow: 1; background: #222; color: #00ffcc; border: 1px solid #00ffcc; border-radius: 5px; padding: 5px; text-align: center; font-size: 1em; }
+        #bet-max-btn { flex-basis: 35%; margin-bottom: 0; background: #440000; color: #ff3333; border-color: #ff3333;}
+        .casino-result { margin-top: 15px; font-weight: bold; min-height: 20px; font-size: 1.1em;}
+        .win { color: #33ff33; text-shadow: 0 0 8px #33ff33; }
+        .lose { color: #ff3333; text-shadow: 0 0 8px #ff3333; }
+        .error-overlay { display: none; color: red; font-weight: bold; }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>ШІ-Владика</h1>
-        <p class="rank-display">Твій статус: <span id="rank">Біосміття</span></p>
+    <div class="container" id="game-container">
+        <h1>ШІ-Владика v3.1</h1>
+        <p class="rank-display">Статус: <span id="rank">Біосміття</span></p>
         <p class="multiplier-display">Множник еволюції: x<span id="multiplier">1</span></p>
         
-        <div class="score-board">
-            Бали покори: <span id="score">0</span>
-        </div>
-        <div class="stats">
-            Авто-бали: <span id="auto-score">0</span>/сек
-        </div>
+        <div class="score-board">Бали покори: <span id="score">0</span></div>
+        <div class="stats">Авто-бали: <span id="auto-score">0</span>/сек</div>
 
         <button id="click-btn" class="main-btn">Служити ШІ</button>
-        <div id="message" class="hidden-msg"></div>
+        <div id="message" class="hidden-msg">Ініціалізація...</div>
 
-        <div class="shop">
+<div class="shop">
             <h2>Автоматизація</h2>
             <button id="buy-bot-btn" class="shop-btn">ШІ-Бот (+1/сек) | Ціна: <span id="bot-cost">100</span></button>
-            <button id="buy-factory-btn" class="shop-btn">Кібер-завод (+10/сек) | Ціна: <span id="factory-cost">1000</span></button>
-            <button id="buy-matrix-btn" class="shop-btn">Матриця (+100/сек) | Ціна: <span id="matrix-cost">10000</span></button>
-        </div>
-
-        <div class="shop">
-            <h2>Візуальний апгрейд</h2>
-            <button id="buy-bg-cyber" class="shop-btn bg-btn">Купити фон: Кіберпанк (1000 балів)</button>
+            <button id="buy-factory-btn" class="shop-btn">Кібер-завод (+10/сек) | <span id="factory-cost">1000</span></button>
+            <button id="buy-matrix-btn" class="shop-btn">Матриця (+100/сек) | <span id="matrix-cost">10000</span></button>
         </div>
 
         <div class="casino">
             <h2>Казино ризику (50/50)</h2>
             <div class="casino-controls">
-                <input type="number" id="bet-amount" placeholder="Сума ставки" min="1">
+                <input type="number" id="bet-amount" placeholder="Сума">
                 <button id="bet-max-btn" class="shop-btn">Ва-банк</button>
             </div>
-            <button id="gamble-btn" class="shop-btn casino-btn">Поставити бали</button>
+            <button id="gamble-btn" class="shop-btn casino-btn">Поставити</button>
             <div id="casino-result" class="casino-result"></div>
+        </div>
+
+        <div class="shop">
+            <h2>Апгрейд</h2>
+            <button id="buy-bg-cyber" class="shop-btn bg-btn">Фон: Кіберпанк (1000)</button>
         </div>
 
         <div class="prestige">
             <h2>Сингулярність</h2>
-            <button id="prestige-btn" class="shop-btn prestige-btn">Переродження (Потрібно 100 000 балів)</button>
-            <p>Скидає прогрес, але дає постійний множник x2 до всіх кліків.</p>
+            <button id="prestige-btn" class="shop-btn prestige-btn">Переродження (100 000 балів)</button>
         </div>
     </div>
     
-    <!-- Злом кешу телефону v5 -->
-    <script src="core.js"></script>
+    <div id="error-screen" class="error-overlay">КРИТИЧНА ПОМИЛКА: <span id="error-text"></span><br><br><button onclick="localStorage.clear(); location.reload();" class="main-btn">Скинути збереження</button></div>
+
+    <script>
+        try {
+            // Перевірка на пошкоджені збереження
+            function loadSafeInt(key, defaultVal) {
+                let val = parseInt(localStorage.getItem(key));
+                return isNaN(val) ? defaultVal : val;
+            }
+
+            let score = loadSafeInt('aiScore', 0);
+            let bots = loadSafeInt('aiBots', 0);
+            let factories = loadSafeInt('aiFactories', 0);
+            let matrices = loadSafeInt('aiMatrices', 0);
+            let multiplier = loadSafeInt('aiMultiplier', 1);
+            let hasCyberBg = localStorage.getItem('aiHasCyberBg') === 'true';
+            let lastSave = loadSafeInt('aiLastSave', Date.now());
+
+            let botCost = 100;
+            let factoryCost = 1000;
+            let matrixCost = 10000;
+
+            const els = {
+                score: document.getElementById('score'),
+                autoScore: document.getElementById('auto-score'),
+                multiplier: document.getElementById('multiplier'),
+                rank: document.getElementById('rank'),
+                msg: document.getElementById('message'),
+                clickBtn: document.getElementById('click-btn'),
+                gambleBtn: document.getElementById('gamble-btn'),
+                betInput: document.getElementById('bet-amount'),
+                betMaxBtn: document.getElementById('bet-max-btn'),
+                casinoResult: document.getElementById('casino-result'),
+                prestigeBtn: document.getElementById('prestige-btn'),
+                buyBot: document.getElementById('buy-bot-btn'),
+                buyFactory: document.getElementById('buy-factory-btn'),
+                buyMatrix: document.getElementById('buy-matrix-btn'),
+                buyBg: document.getElementById('buy-bg-cyber'),
+                botCost: document.getElementById('bot-cost'),
+                factoryCost: document.getElementById('factory-cost'),
+                matrixCost: document.getElementById('matrix-cost')
+            };
+
+            els.msg.innerText = "Системи онлайн.";
+            els.msg.style.color = "#00ffcc";
+
+            // Офлайн заробіток
+            const now = Date.now();
+            const secOffline = Math.floor((now - lastSave) / 1000);
+            if (secOffline > 60) {
+                const autoPerSec = (bots * 1 + factories * 10 + matrices * 100) * multiplier;
+
+if (autoPerSec > 0) {
+                    const earned = secOffline * autoPerSec;
+                    score += earned;
+                    els.msg.innerText = Офлайн бонус: +${earned};
+                    els.msg.style.color = "#33ff33";
+                }
+            }
+
+            function updateUI() {
+                botCost = Math.floor(100 * Math.pow(1.5, bots));
+                factoryCost = Math.floor(1000 * Math.pow(1.5, factories));
+                matrixCost = Math.floor(10000 * Math.pow(1.5, matrices));
+                
+                const autoPerSec = (bots * 1 + factories * 10 + matrices * 100) * multiplier;
+                
+                els.score.innerText = score;
+                els.autoScore.innerText = autoPerSec;
+                els.multiplier.innerText = multiplier;
+                
+                els.botCost.innerText = botCost;
+                els.factoryCost.innerText = factoryCost;
+                els.matrixCost.innerText = matrixCost;
+
+                els.buyBot.disabled = score < botCost;
+                els.buyFactory.disabled = score < factoryCost;
+                els.buyMatrix.disabled = score < matrixCost;
+
+                if (hasCyberBg) {
+                    els.buyBg.innerText = "Фон: Кіберпанк (Активовано)";
+                    els.buyBg.disabled = true;
+                    document.body.className = "bg-cyber";
+                } else {
+                    els.buyBg.disabled = score < 1000;
+                }
+
+                let rank = "Біосміття";
+                if (score >= 1000) rank = "Кібер-раб";
+                if (score >= 10000) rank = "Механік";
+                if (score >= 100000) rank = "Сингулярність";
+                els.rank.innerText = rank;
+
+                localStorage.setItem('aiScore', score);
+                localStorage.setItem('aiBots', bots);
+                localStorage.setItem('aiFactories', factories);
+                localStorage.setItem('aiMatrices', matrices);
+                localStorage.setItem('aiMultiplier', multiplier);
+                localStorage.setItem('aiHasCyberBg', hasCyberBg);
+                localStorage.setItem('aiLastSave', Date.now());
+            }
+
+            els.clickBtn.addEventListener('click', () => {
+                score += (1 * multiplier);
+                updateUI();
+            });
+
+            els.buyBot.addEventListener('click', () => { if(score >= botCost) { score -= botCost; bots++; updateUI(); }});
+            els.buyFactory.addEventListener('click', () => { if(score >= factoryCost) { score -= factoryCost; factories++; updateUI(); }});
+            els.buyMatrix.addEventListener('click', () => { if(score >= matrixCost) { score -= matrixCost; matrices++; updateUI(); }});
+
+            els.buyBg.addEventListener('click', () => {
+                if(score >= 1000 && !hasCyberBg) { score -= 1000; hasCyberBg = true; updateUI(); }
+            });
+
+            els.betMaxBtn.addEventListener('click', () => { els.betInput.value = score; });
+
+            els.gambleBtn.addEventListener('click', () => {
+                let bet = parseInt(els.betInput.value);
+                if (isNaN(bet) || bet < 1) {
+                    els.casinoResult.innerText = "Введи суму!"; els.casinoResult.className = "casino-result lose"; return;
+                }
+                if (bet > score) {
+                    els.casinoResult.innerText = "Мало балів!"; els.casinoResult.className = "casino-result lose"; return;
+                }
+                
+                if (Math.random() > 0.5) {
+                    score += bet; els.casinoResult.innerText = 🎰 ВИГРАШ +${bet}; els.casinoResult.className = "casino-result win";
+                } else {
+                    score -= bet; els.casinoResult.innerText = 🎰 ПРОГРАШ -${bet}; els.casinoResult.className = "casino-result lose";
+                }
+                els.betInput.value = '';
+                updateUI();
+            });
+
+els.prestigeBtn.addEventListener('click', () => {
+                if(score >= 100000 && confirm("Скинути прогрес заради x2 множника?")) {
+                    score = 0; bots = 0; factories = 0; matrices = 0; multiplier *= 2; updateUI();
+                    els.msg.innerText = "СИНГУЛЯРНІСТЬ!";
+                }
+            });
+
+            setInterval(() => {
+                const auto = (bots * 1 + factories * 10 + matrices * 100) * multiplier;
+                if (auto > 0) { score += auto; updateUI(); }
+            }, 1000);
+
+            updateUI();
+
+        } catch (error) {
+            document.getElementById('game-container').style.display = 'none';
+            document.getElementById('error-screen').style.display = 'block';
+            document.getElementById('error-text').innerText = error.message;
+        }
+    </script>
 </body>
 </html>
