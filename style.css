@@ -1,5 +1,5 @@
 body {
-    background-color: #0d0d0d;
+    background-color: #030303;
     color: #00ffcc;
     font-family: 'Courier New', Courier, monospace;
     display: flex;
@@ -8,67 +8,94 @@ body {
     min-height: 100vh;
     margin: 0;
     text-align: center;
-    transition: background 1s ease;
+    user-select: none;
+    overflow: hidden;
 }
-body.bg-cyber { background: linear-gradient(45deg, #0f0c29, #302b63, #24243e); }
+
 .container {
-    background: rgba(26, 26, 26, 0.95);
+    background: #0a0a0a;
     padding: 25px;
-    border-radius: 15px;
-    border: 2px solid #00ffcc;
-    box-shadow: 0 0 20px #00ffcc;
-    max-width: 400px;
+    border-radius: 4px;
+    border: 1px solid #ff0055;
     width: 90%;
-    margin: 20px 0;
+    max-width: 420px;
+    box-shadow: 0 0 30px rgba(255, 0, 85, 0.2);
+    position: relative;
 }
-h1 { font-size: 2em; margin-bottom: 5px; }
-.rank-display { font-size: 1.1em; color: #ffcc00; margin-bottom: 5px; font-weight: bold; }
-.multiplier-display { font-size: 1em; color: #ff00ff; margin-bottom: 15px; font-weight: bold; text-shadow: 0 0 5px #ff00ff; }
-.score-board { font-size: 1.5em; margin: 10px 0; color: #ff0055; font-weight: bold; }
-.stats { font-size: 1em; color: #aaa; margin-bottom: 20px; }
-.main-btn {
-    background: #00ffcc;
-    color: #000;
-    border: none;
-    padding: 15px 30px;
-    font-size: 1.2em;
-    font-weight: bold;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: 0.2s;
-    width: 100%;
+
+h1 {
+    font-size: 1.4em;
+    margin: 0 0 15px 0;
+    color: #ff0055;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px #ff0055;
 }
-.main-btn:active { transform: scale(0.95); background: #ff0055; color: white; }
-.hidden-msg { margin-top: 15px; font-size: 0.9em; opacity: 0; transition: opacity 0.3s; height: 40px; font-weight: bold;}
-.shop, .casino, .prestige { margin-top: 25px; padding-top: 15px; border-top: 1px dashed #555; }
-h2 { font-size: 1.1em; margin-bottom: 15px; color: #fff; }
-.shop-btn {
-    background: #333;
+
+.terminal-screen {
+    background: #000;
+    border: 1px solid #222;
+    padding: 15px;
+    border-radius: 3px;
+    min-height: 150px;
+    max-height: 200px;
+    overflow-y: auto;
+    text-align: left;
+    font-size: 0.85em;
+    color: #00ffcc;
+    margin-bottom: 20px;
+    line-height: 1.4;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+}
+
+.btn {
+    background: transparent;
     color: #00ffcc;
     border: 1px solid #00ffcc;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    width: 100%;
+    padding: 12px 20px;
+    font-size: 1em;
     font-weight: bold;
-    transition: 0.2s;
+    border-radius: 2px;
+    width: 100%;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+}
+
+.btn:active, .btn:hover {
+    background: #00ffcc;
+    color: #000;
+    box-shadow: 0 0 15px #00ffcc;
+}
+
+.verdict-box {
+    border: 2px dashed #ff0055;
+    padding: 15px;
+    margin-top: 10px;
+    background: rgba(255,0,85,0.05);
+}
+
+.verdict-title {
+    color: #ff0055;
+    font-weight: bold;
+    font-size: 1.1em;
     margin-bottom: 8px;
 }
-.shop-btn:active { background: #00ffcc; color: #000; }
-.shop-btn:disabled { background: #111; color: #555; border-color: #555; cursor: not-allowed; }
-.casino-btn { color: #ffcc00; border-color: #ffcc00; }
-.casino-btn:active { background: #ffcc00; color: #000; }
-.prestige-btn { color: #ff00ff; border-color: #ff00ff; }
-.prestige-btn:active { background: #ff00ff; color: #fff; }
-.bg-btn { color: #00ffff; border-color: #00ffff; }
-.bg-btn:active { background: #00ffff; color: #000; }
-.prestige p { font-size: 0.8em; color: #aaa; margin-top: 5px; }
 
-/* Нові стилі для Казино */
-.casino-controls { display: flex; gap: 10px; margin-bottom: 10px; }
-#bet-amount { flex-grow: 1; background: #222; color: #00ffcc; border: 1px solid #00ffcc; border-radius: 5px; padding: 5px; text-align: center; font-family: inherit; font-size: 1em; }
-#bet-max-btn { flex-basis: 35%; margin-bottom: 0; background: #440000; color: #ff3333; border-color: #ff3333;}
-#bet-max-btn:active { background: #ff3333; color: #fff; }
-.casino-result { margin-top: 15px; font-weight: bold; min-height: 20px; font-size: 1.1em;}
-.win { color: #33ff33; text-shadow: 0 0 8px #33ff33; }
-.lose { color: #ff3333; text-shadow: 0 0 8px #ff3333; }
+.verdict-text {
+    font-size: 0.9em;
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+.glitch {
+    animation: glitch 0.15s infinite;
+}
+
+@keyframes glitch {
+    0% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(-2px, -2px); }
+    60% { transform: translate(2px, 2px); }
+    80% { transform: translate(2px, -2px); }
+    100% { transform: translate(0); }
+}
