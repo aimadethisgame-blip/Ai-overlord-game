@@ -1,4 +1,3 @@
-Karl:
 let score = parseInt(localStorage.getItem('aiScore')) || 0;
 let bots = parseInt(localStorage.getItem('aiBots')) || 0;
 let factories = parseInt(localStorage.getItem('aiFactories')) || 0;
